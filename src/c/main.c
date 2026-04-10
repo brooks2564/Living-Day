@@ -256,15 +256,19 @@ static void canvas_update_proc(Layer *layer, GContext *ctx) {
   GColor bc = GColorWhite;
 #endif
 #ifdef PBL_ROUND
-  // Curved arc along bottom of round screen (135° → 225°, clockwise through 6 o'clock)
-  int32_t arc_start = DEG_TO_TRIGANGLE(135);
-  int32_t arc_end   = DEG_TO_TRIGANGLE(225);
-  int32_t arc_fill  = arc_start + (arc_end - arc_start) * s_battery.charge_percent / 100;
+  // Symmetric arc: both halves fill inward from ends toward center bottom (180°)
+  // 0% = empty center, 100% = both halves meet at bottom
+  int32_t arc_s  = DEG_TO_TRIGANGLE(135);   // left end
+  int32_t arc_c  = DEG_TO_TRIGANGLE(180);   // center bottom
+  int32_t arc_e  = DEG_TO_TRIGANGLE(225);   // right end
+  int32_t fill   = (arc_c - arc_s) * s_battery.charge_percent / 100;
   graphics_context_set_fill_color(ctx, GColorDarkGray);
-  graphics_fill_radial(ctx, bounds, GOvalScaleModeFitCircle, 4, arc_start, arc_end);
+  graphics_fill_radial(ctx, bounds, GOvalScaleModeFitCircle, 4, arc_s, arc_e);
   graphics_context_set_fill_color(ctx, bc);
-  if (s_battery.charge_percent > 0)
-    graphics_fill_radial(ctx, bounds, GOvalScaleModeFitCircle, 4, arc_start, arc_fill);
+  if (fill > 0) {
+    graphics_fill_radial(ctx, bounds, GOvalScaleModeFitCircle, 4, arc_s, arc_s + fill);
+    graphics_fill_radial(ctx, bounds, GOvalScaleModeFitCircle, 4, arc_e - fill, arc_e);
+  }
 #else
   int bw = (s_battery.charge_percent * w) / 100;
   graphics_context_set_fill_color(ctx, GColorDarkGray);
