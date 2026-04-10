@@ -1,0 +1,29 @@
+{
+  "name": "living-day",
+  "author": "Brooman Inks",
+  "version": "1.0.0",
+  "keywords": ["pebble-app"],
+  "private": true,
+  "dependencies": {},
+  "pebble": {
+    "displayName": "Living Day",
+    "shortName": "Living Day",
+    "longName": "Living Day",
+    "uuid": "7a632f7b-5ec4-44f9-baf2-5279faae662c",
+    "sdkVersion": "3",
+    "enableMultiJS": true,
+    "targetPlatforms": [
+      "aplite",
+      "basalt",
+      "chalk",
+      "diorite",
+      "emery",
+      "flint",
+      "gabbro"
+    ],
+    "watchapp": {
+      "watchface": true
+    },
+    "capabilities": ["health"]
+  }
+}
