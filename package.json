@@ -24,7 +24,7 @@
     "watchapp": {
       "watchface": true
     },
-    "capabilities": ["configurable"],
+    "capabilities": ["health"],
     "resources": {
       "media": [
         {
