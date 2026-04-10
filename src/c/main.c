@@ -248,18 +248,30 @@ static void canvas_update_proc(Layer *layer, GContext *ctx) {
     GRect(0, h * 9/100 + 50, w, 22),
     GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
 
-  // ── 10. Battery bar (3px at very bottom) ─────────────────────────────
-  int bw = (s_battery.charge_percent * w) / 100;
+  // ── 10. Battery bar ───────────────────────────────────────────────────
 #ifdef PBL_COLOR
   GColor bc = s_battery.charge_percent > 50 ? GColorGreen :
               s_battery.charge_percent > 20 ? GColorYellow : GColorRed;
 #else
   GColor bc = GColorWhite;
 #endif
+#ifdef PBL_ROUND
+  // Curved arc along bottom of round screen (135° → 225°, clockwise through 6 o'clock)
+  int32_t arc_start = DEG_TO_TRIGANGLE(135);
+  int32_t arc_end   = DEG_TO_TRIGANGLE(225);
+  int32_t arc_fill  = arc_start + (arc_end - arc_start) * s_battery.charge_percent / 100;
+  graphics_context_set_fill_color(ctx, GColorDarkGray);
+  graphics_fill_radial(ctx, bounds, GOvalScaleModeFitCircle, 4, arc_start, arc_end);
+  graphics_context_set_fill_color(ctx, bc);
+  if (s_battery.charge_percent > 0)
+    graphics_fill_radial(ctx, bounds, GOvalScaleModeFitCircle, 4, arc_start, arc_fill);
+#else
+  int bw = (s_battery.charge_percent * w) / 100;
   graphics_context_set_fill_color(ctx, GColorDarkGray);
   graphics_fill_rect(ctx, GRect(0, h - 5, w, 3), 0, GCornerNone);
   graphics_context_set_fill_color(ctx, bc);
   graphics_fill_rect(ctx, GRect(0, h - 5, bw, 3), 0, GCornerNone);
+#endif
 }
 
 // ── Handlers ──────────────────────────────────────────────────────────────
